@@ -77,15 +77,25 @@ typedef NodePath = {
 }
 
 typedef NodeUrlObj = {
+	@:optional
 	var href:String;
+	@:optional
 	var host:String;
+	@:optional
 	var protocol:String;
+	@:optional
 	var auth:String;
+	@:optional
 	var hostname:String;
+	@:optional
 	var port:String;
+	@:optional
 	var pathname:String;
+	@:optional
 	var search:String;
+	@:optional
 	var query:Dynamic;
+	@:optional
 	var hash:String;
 }
 
@@ -342,9 +352,9 @@ typedef NodeFS = {
 	function readFile(path:String,?options:NodeFsFileOptions,cb:NodeErr->Dynamic->Void):Void;
 	function readFileSync(path:String,?options:NodeFsFileOptions):Dynamic;
 
-	@:overload(function(fileName:String,data:NodeBuffer,cb:NodeErr->Void):Void {})
+	@:overload(function(fileName:String,data:NodeBuffer,?enc:String,cb:NodeErr->Void):Void {})
 	function writeFile(fileName:String,contents:String,?enc:String,cb:NodeErr->Void):Void;
-	@:overload(function(fileName:String,data:NodeBuffer):Void {})
+	@:overload(function(fileName:String,data:NodeBuffer,?enc:String):Void {})
 	function writeFileSync(fileName:String,contents:String,?enc:String):Void;
 
 	@:overload(function(fileName:String,data:NodeBuffer,cb:NodeErr->Void):Void {})
@@ -579,6 +589,9 @@ typedef NodeHttpServerResp = { > NodeWriteStream,
 	 continue,response
 */
 typedef NodeHttpClientReq = { > NodeWriteStream,
+	function setHeader(name:String,value:Dynamic):Void;
+	function getHeader(name:String):Dynamic;
+	function removeHeader(name:String):Void;
 }
 
 /* Emits:
@@ -612,7 +625,7 @@ typedef NodeHttpServer = { > NodeEventEmitter,
  */
 typedef NodeHttpReqOpt = {
 	@:optional var host:String;
-	@:optional var hostName:String;
+	@:optional var hostname:String;
 	@:optional var port:Int;
 	@:optional var localAddress:String;
 	@:optional var socketPath:String;
@@ -643,10 +656,10 @@ typedef NodeAgent = { > NodeEventEmitter,
 typedef NodeHttp = {
 	function createServer(listener:NodeHttpServerReq->NodeHttpServerResp->Void):NodeHttpServer;
 	function createClient(port:Int,host:String):NodeHttpClient;
-	@:overload(function(parsedUrl:NodeUrlObj,res:NodeHttpClientResp->Void):NodeHttpClientReq {})
-	function request(options:NodeHttpReqOpt,res:NodeHttpClientResp->Void):NodeHttpClientReq;
-	@:overload(function(parsedUrl:NodeUrlObj,res:NodeHttpClientResp->Void):Void {})
-	function get(options:NodeHttpReqOpt,res:NodeHttpClientResp->Void):Void;
+	@:overload(function(parsedUrl:NodeUrlObj,?res:NodeHttpClientResp->Void):NodeHttpClientReq {})
+	function request(options:NodeHttpReqOpt,?res:NodeHttpClientResp->Void):NodeHttpClientReq;
+	@:overload(function(parsedUrl:NodeUrlObj,?res:NodeHttpClientResp->Void):NodeHttpClientReq {})
+	function get(options:NodeHttpReqOpt,?res:NodeHttpClientResp->Void):NodeHttpClientReq;
 	function getAgent(host:String,port:Int):NodeAgent;
 }
 
@@ -938,15 +951,15 @@ class Node {
 	public static var clearTimeout:Int->Void = untyped __js__('clearTimeout');
 	public static var setInterval:Dynamic->Int->?Array<Dynamic>->Int = untyped __js__('setInterval');
 	public static var clearInterval:Int->Void = untyped __js__('clearInterval');
-	public static var setImmediate:Dynamic->?Array<Dynamic>->Int = {		
-		var version = process.version.substr(1).split(".").map(Std.parseInt);		
-		(version[0] > 0 || version[1] >= 9) ? 
+	public static var setImmediate:Dynamic->?Array<Dynamic>->Int = {
+		var version = process.version.substr(1).split(".").map(Std.parseInt);
+		(version[0] > 0 || version[1] >= 9) ?
 			{ isNodeWebkit() ? untyped __js__('global.setImmediate') : untyped __js__('setImmediate'); } :
 			null;
 	}
 	public static var clearImmediate:Int->Void = {
 		var version = process.version.substr(1).split(".").map(Std.parseInt);
-		(version[0] > 0 || version[1] >= 9) ? 
+		(version[0] > 0 || version[1] >= 9) ?
 			{ isNodeWebkit() ? untyped __js__('global.clearImmediate') : untyped __js__('clearImmediate'); } :
 			null;
 	}
@@ -984,9 +997,10 @@ class Node {
 	static inline function get_json() : NodeJson return untyped __js__('JSON');
 
 	public static function newSocket(?options):NodeNetSocket {
-		return untyped __js__("new js.Node.net.Socket(options)");
+		var net = js.Node.net;
+		return untyped __js__("new net.Socket(options)");
 	}
-	
+
 	public static function isNodeWebkit():Bool return untyped __js__('(typeof process == "object")');
 }
 
