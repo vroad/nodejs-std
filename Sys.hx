@@ -56,6 +56,10 @@ class Sys
 	public static function executablePath() : String {
 		return untyped process.execPath;
 	}
+
+	public static function getCwd() : String {
+		return untyped process.cwd();
+	}
 	
 	public static function setCwd(s:String) : Void {
 		untyped process.chdir(s);
