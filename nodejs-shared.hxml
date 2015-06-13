@@ -1,0 +1,9 @@
+-cp .
+-cp docs
+-main ImportAll
+-dce no
+-D nodejs
+-D codegen
+-js nodejs.js
+--macro "allowPackage('sys')"
+--macro "define('sys')"
