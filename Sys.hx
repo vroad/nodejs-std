@@ -49,6 +49,10 @@ class Sys
 		}
 	}
 	
+	public static function print(v:Dynamic) : Void {
+		untyped process.stdout.write(v);
+	}
+	
 	public static function println(v:Dynamic) : Void {
 		untyped console.log(v);
 	}
