@@ -45,7 +45,8 @@ class Sys
 		case "linux": return "Linux";
 		case "sunos": return "SunOS";
 		case "win32": return "Windows";
-		default: return "";
+		case "android":return "Android";
+		default: return untyped process.platform;
 		}
 	}
 	
